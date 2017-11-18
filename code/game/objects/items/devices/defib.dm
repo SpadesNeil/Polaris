@@ -11,6 +11,7 @@
 	slot_flags = SLOT_BACK
 	force = 5
 	throwforce = 6
+	preserve_item = 1
 	w_class = ITEMSIZE_LARGE
 	origin_tech = list(TECH_BIO = 4, TECH_POWER = 2)
 	action_button_name = "Remove/Replace Paddles"
@@ -373,7 +374,10 @@
 // This proc is used so that we can return out of the revive process while ensuring that busy and update_icon() are handled
 /obj/item/weapon/shockpaddles/proc/do_revive(mob/living/carbon/human/H, mob/user)
 	if(!H.client && !H.teleop)
-		to_chat(find_dead_player(H.ckey, 1), "Someone is attempting to resuscitate you. Re-enter your body if you want to be revived!")
+		for(var/mob/observer/dead/ghost in player_list)
+			if(ghost.mind == H.mind)
+				to_chat(ghost, "<b><font color = #330033><font size = 3>Someone is attempting to resuscitate you. Re-enter your body if you want to be revived!</b> (Verbs -> Ghost -> Re-enter corpse)</font></font>")
+				break
 
 	//beginning to place the paddles on patient's chest to allow some time for people to move away to stop the process
 	user.visible_message("<span class='warning'>\The [user] begins to place [src] on [H]'s chest.</span>", "<span class='warning'>You begin to place [src] on [H]'s chest...</span>")
@@ -541,6 +545,13 @@
 	if(isrobot(src.loc))
 		var/mob/living/silicon/robot/R = src.loc
 		return (R.cell && R.cell.checked_use(charge_amt))
+
+/obj/item/weapon/shockpaddles/robot/combat
+	name = "combat defibrillator paddles"
+	desc = "A pair of advanced shockpaddles powered by a robot's internal power cell, able to penetrate thick clothing.  This version \
+	appears to be optimized for combat situations, foregoing the safety inhabitors in favor of a faster charging time."
+	safety = 0
+	chargetime = (1 SECONDS)
 
 /*
 	Shockpaddles that are linked to a base unit

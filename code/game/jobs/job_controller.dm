@@ -74,7 +74,7 @@ var/global/datum/controller/occupations/job_master
 
 	proc/FreeRole(var/rank)	//making additional slot on the fly
 		var/datum/job/job = GetJob(rank)
-		if(job && job.current_positions >= job.total_positions && job.total_positions != -1)
+		if(job && job.total_positions != -1)
 			job.total_positions++
 			return 1
 		return 0
@@ -623,7 +623,7 @@ var/global/datum/controller/occupations/job_master
 		else
 			spawnpos = spawntypes[H.client.prefs.spawnpoint]
 
-	if(spawnpos && istype(spawnpos) && spawnpos.turfs.len)  // VOREStation Edit - Fix runtime if no landmarks exist for a spawntype
+	if(spawnpos && istype(spawnpos) && spawnpos.turfs.len)
 		if(spawnpos.check_job_spawning(rank))
 			H.forceMove(spawnpos.get_spawn_position())
 			. = spawnpos.msg
