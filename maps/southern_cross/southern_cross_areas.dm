@@ -122,7 +122,7 @@
 	flags = RAD_SHIELDED
 
 /area/surface/cave
-	ambience = list('sound/ambience/ambimine.ogg', 'sound/ambience/song_game.ogg')
+	ambience = list('sound/ambience/ambimine.ogg', 'sound/ambience/song_game.ogg', 'sound/ambience/serspaceamb1.ogg')
 
 // The bottom half that connects to the outpost and is safer.
 /area/surface/cave/explored/normal
@@ -346,6 +346,9 @@
 	icon_state = "red"
 	requires_power = FALSE
 
+/area/surface/outpost/wall/checkpoint
+	name = "Checkpoint"
+
 //Mining Station
 
 /area/outpost/mining_station
@@ -465,6 +468,10 @@
 	name = "\improper Auxiliary Engineering Station"
 	sound_env = SMALL_ENCLOSED
 
+/area/crew_quarters/firstdeck/gym
+	name = "\improper Station Gym"
+	icon_state = "fitness"
+
 /area/construction/firstdeck/
 	name = "\improper Engineering Construction Area"
 	icon_state = "construction"
@@ -566,15 +573,15 @@
 	icon_state = "docking_hallway"
 
 /area/hallway/secondary/escape/firstdeck/ep_port
-	name = "\improper Escape Pod Port"
+	name = "\improper Large Escape Pod 2 Port"
 	icon_state = "escape_pod"
 
 /area/hallway/secondary/escape/firstdeck/ep_starboard1
-	name = "\improper Escape Pod Starboard 1"
+	name = "\improper Escape Pod 3 Starboard"
 	icon_state = "escape_pod"
 
 /area/hallway/secondary/escape/firstdeck/ep_starboard2
-	name = "\improper Escape Pod Starboard 2"
+	name = "\improper Large Escape Pod 2 Starboard"
 	icon_state = "escape_pod"
 
 /area/hallway/secondary/escape/firstdeck/ep_aftport
@@ -983,11 +990,11 @@ area/crew_quarters/heads/sc/hop/quarters
 	icon_state = "SolarcontrolS"
 
 /area/maintenance/solars/foreportsolar
-	name = "Solar Maintenance - Fore Starboard"
-	icon_state = "SolarcontrolS"
+	name = "Solar Maintenance - Fore Port"
+	icon_state = "SolarcontrolP"
 
 /area/maintenance/solars/forestarboardsolar
-	name = "Solar Maintenance - Fore Port"
+	name = "Solar Maintenance - Fore Starboard"
 	icon_state = "SolarcontrolS"
 
 /area/solar
@@ -1098,7 +1105,7 @@ area/crew_quarters/heads/sc/hop/quarters
 	icon_state = "south"
 
 /area/shuttle/shuttle1/mining
-	name = "mining site"
+	name = "wilderness site"
 	icon_state = "shuttlered"
 
 /area/shuttle/shuttle1/planet
@@ -1132,7 +1139,7 @@ area/crew_quarters/heads/sc/hop/quarters
 	name = "\improper Hangar Deck"
 	icon_state = "yellow"
 	requires_power = 0
-	dynamic_lighting = 0
+	dynamic_lighting = 1
 	flags = RAD_SHIELDED
 
 /area/shuttle/shuttle2/start
@@ -1149,7 +1156,7 @@ area/crew_quarters/heads/sc/hop/quarters
 	icon_state = "south"
 
 /area/shuttle/shuttle2/mining
-	name = "mining site"
+	name = "wilderness site"
 	icon_state = "shuttlered"
 
 /area/shuttle/shuttle2/planet
@@ -1234,6 +1241,7 @@ area/crew_quarters/heads/sc/hop/quarters
 
 /area/syndicate_station/planet
 	name = "planetside"
+	dynamic_lighting = 1
 	icon_state = "shuttlered"
 	base_turf = /turf/simulated/floor/outdoors/grass/sif/planetuse
 
@@ -1259,6 +1267,7 @@ area/crew_quarters/heads/sc/hop/quarters
 
 /area/syndicate_station/arrivals_dock
 	name = "\improper docked with Southern Cross"
+	dynamic_lighting = 0
 	icon_state = "shuttle"
 
 //Skipjack
@@ -1294,6 +1303,7 @@ area/crew_quarters/heads/sc/hop/quarters
 /area/skipjack_station/planet
 	name = "planet"
 	icon_state = "shuttlered"
+	dynamic_lighting = 1
 	base_turf = /turf/simulated/floor/outdoors/grass/sif/planetuse
 
 /area/skipjack_station/orbit
@@ -1375,6 +1385,7 @@ area/crew_quarters/heads/sc/hop/quarters
 /area/ninja_dojo/arrivals_dock
 	name = "\improper docked with Southern Cross"
 	icon_state = "shuttle"
+	dynamic_lighting = 0
 
 //Trade Ship
 
@@ -1395,6 +1406,7 @@ area/crew_quarters/heads/sc/hop/quarters
 
 /area/shuttle/escape_pod1/station
 	icon_state = "shuttle2"
+	base_turf = /turf/simulated/floor/airless
 
 /area/shuttle/escape_pod1/centcom
 	icon_state = "shuttle"
@@ -1408,6 +1420,7 @@ area/crew_quarters/heads/sc/hop/quarters
 
 /area/shuttle/escape_pod2/station
 	icon_state = "shuttle2"
+	base_turf = /turf/simulated/floor/airless
 
 /area/shuttle/escape_pod2/centcom
 	icon_state = "shuttle"
@@ -1421,6 +1434,7 @@ area/crew_quarters/heads/sc/hop/quarters
 
 /area/shuttle/escape_pod3/station
 	icon_state = "shuttle2"
+	base_turf = /turf/simulated/floor/airless
 
 /area/shuttle/escape_pod3/centcom
 	icon_state = "shuttle"
@@ -1434,6 +1448,7 @@ area/crew_quarters/heads/sc/hop/quarters
 
 /area/shuttle/escape_pod4/station
 	icon_state = "shuttle2"
+	base_turf = /turf/simulated/floor/airless
 
 /area/shuttle/escape_pod4/centcom
 	icon_state = "shuttle"
@@ -1447,6 +1462,7 @@ area/crew_quarters/heads/sc/hop/quarters
 
 /area/shuttle/escape_pod5/station
 	icon_state = "shuttle2"
+	base_turf = /turf/simulated/floor/airless
 
 /area/shuttle/escape_pod5/centcom
 	icon_state = "shuttle"
@@ -1460,6 +1476,7 @@ area/crew_quarters/heads/sc/hop/quarters
 
 /area/shuttle/escape_pod6/station
 	icon_state = "shuttle2"
+	base_turf = /turf/simulated/floor/airless
 
 /area/shuttle/escape_pod6/centcom
 	icon_state = "shuttle"
@@ -1473,6 +1490,7 @@ area/crew_quarters/heads/sc/hop/quarters
 
 /area/shuttle/escape_pod7/station
 	icon_state = "shuttle2"
+	base_turf = /turf/simulated/floor/reinforced/airless
 
 /area/shuttle/escape_pod7/centcom
 	icon_state = "shuttle"
@@ -1486,6 +1504,7 @@ area/crew_quarters/heads/sc/hop/quarters
 
 /area/shuttle/escape_pod8/station
 	icon_state = "shuttle2"
+	base_turf = /turf/simulated/floor/reinforced/airless
 
 /area/shuttle/escape_pod8/centcom
 	icon_state = "shuttle"
@@ -1501,6 +1520,7 @@ area/crew_quarters/heads/sc/hop/quarters
 
 /area/shuttle/large_escape_pod1/station
 	icon_state = "shuttle2"
+	base_turf = /turf/simulated/floor/airless
 
 /area/shuttle/large_escape_pod1/centcom
 	icon_state = "shuttle"
@@ -1514,6 +1534,7 @@ area/crew_quarters/heads/sc/hop/quarters
 
 /area/shuttle/large_escape_pod2/station
 	icon_state = "shuttle2"
+	base_turf = /turf/simulated/floor/airless
 
 /area/shuttle/large_escape_pod2/centcom
 	icon_state = "shuttle"
@@ -1526,7 +1547,7 @@ area/crew_quarters/heads/sc/hop/quarters
 
 /area/shuttle/cryo/station
 	icon_state = "shuttle2"
-	base_turf = /turf/simulated/mineral/floor/ignore_mapgen
+	base_turf = /turf/simulated/floor/airless
 
 /area/shuttle/cryo/centcom
 	icon_state = "shuttle"

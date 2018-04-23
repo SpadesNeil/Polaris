@@ -417,6 +417,14 @@
 	required_reagents = list("cryptobiolin" = 1, "inaprovaline" = 1)
 	result_amount = 2
 
+/datum/chemical_reaction/corophizine
+	name = "Corophizine"
+	id = "corophizine"
+	result = "corophizine"
+	required_reagents = list("spaceacillin" = 1, "carbon" = 1, "phoron" = 0.1)
+	catalysts = list("phoron" = 5)
+	result_amount = 2
+
 /datum/chemical_reaction/imidazoline
 	name = "imidazoline"
 	id = "imidazoline"
@@ -868,7 +876,7 @@
 	name = "Red paint"
 	id = "red_paint"
 	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "crayon_dust_red" = 1)
+	required_reagents = list("plasticide" = 1, "water" = 3, "marker_ink_red" = 1)
 	result_amount = 5
 
 /datum/chemical_reaction/red_paint/send_data()
@@ -878,7 +886,7 @@
 	name = "Orange paint"
 	id = "orange_paint"
 	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "crayon_dust_orange" = 1)
+	required_reagents = list("plasticide" = 1, "water" = 3, "marker_ink_orange" = 1)
 	result_amount = 5
 
 /datum/chemical_reaction/orange_paint/send_data()
@@ -888,7 +896,7 @@
 	name = "Yellow paint"
 	id = "yellow_paint"
 	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "crayon_dust_yellow" = 1)
+	required_reagents = list("plasticide" = 1, "water" = 3, "marker_ink_yellow" = 1)
 	result_amount = 5
 
 /datum/chemical_reaction/yellow_paint/send_data()
@@ -898,7 +906,7 @@
 	name = "Green paint"
 	id = "green_paint"
 	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "crayon_dust_green" = 1)
+	required_reagents = list("plasticide" = 1, "water" = 3, "marker_ink_green" = 1)
 	result_amount = 5
 
 /datum/chemical_reaction/green_paint/send_data()
@@ -908,7 +916,7 @@
 	name = "Blue paint"
 	id = "blue_paint"
 	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "crayon_dust_blue" = 1)
+	required_reagents = list("plasticide" = 1, "water" = 3, "marker_ink_blue" = 1)
 	result_amount = 5
 
 /datum/chemical_reaction/blue_paint/send_data()
@@ -918,7 +926,7 @@
 	name = "Purple paint"
 	id = "purple_paint"
 	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "crayon_dust_purple" = 1)
+	required_reagents = list("plasticide" = 1, "water" = 3, "marker_ink_purple" = 1)
 	result_amount = 5
 
 /datum/chemical_reaction/purple_paint/send_data()
@@ -928,7 +936,7 @@
 	name = "Grey paint"
 	id = "grey_paint"
 	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "crayon_dust_grey" = 1)
+	required_reagents = list("plasticide" = 1, "water" = 3, "marker_ink_grey" = 1)
 	result_amount = 5
 
 /datum/chemical_reaction/grey_paint/send_data()
@@ -938,7 +946,7 @@
 	name = "Brown paint"
 	id = "brown_paint"
 	result = "paint"
-	required_reagents = list("plasticide" = 1, "water" = 3, "crayon_dust_brown" = 1)
+	required_reagents = list("plasticide" = 1, "water" = 3, "marker_ink_brown" = 1)
 	result_amount = 5
 
 /datum/chemical_reaction/brown_paint/send_data()
@@ -1331,9 +1339,18 @@
 	name = "Vodka"
 	id = "vodka"
 	result = "vodka"
-	required_reagents = list("potato" = 10)
+	required_reagents = list("potatojuice" = 10)
 	catalysts = list("enzyme" = 5)
 	result_amount = 10
+
+/datum/chemical_reaction/drinks/cider
+	name = "Cider"
+	id = "cider"
+	result = "cider"
+	required_reagents = list("applejuice" = 10)
+	catalysts = list("enzyme" = 5)
+	result_amount = 10
+
 
 /datum/chemical_reaction/drinks/sake
 	name = "Sake"
@@ -1863,7 +1880,7 @@
 	required_reagents = list("tea" = 5, "limejuice" = 1)
 	result_amount = 6
 
-/datum/chemical_reaction/drinks/limetea
+/datum/chemical_reaction/drinks/orangetea
 	name = "Orange Tea"
 	id = "orangetea"
 	result = "orangetea"
@@ -2201,9 +2218,8 @@
 	name = "Deuterium"
 	id = "deuterium"
 	result = null
-	required_reagents = list("water" = 10)
-	catalysts = list("hydrophoron" = 5)
-	result_amount = 1
+	required_reagents = list("hydrophoron" = 5, "water" = 10)
+	result_amount = 15
 
 /datum/chemical_reaction/deuterium/on_reaction(var/datum/reagents/holder, var/created_volume)
 	var/turf/T = get_turf(holder.my_atom)

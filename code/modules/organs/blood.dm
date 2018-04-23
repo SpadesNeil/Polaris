@@ -27,8 +27,6 @@ var/const/CE_STABLE_THRESHOLD = 0.5
 		return
 
 	vessel.add_reagent("blood",species.blood_volume)
-	spawn(1)
-		fixblood()
 
 //Resets blood data
 /mob/living/carbon/human/proc/fixblood()
@@ -141,7 +139,7 @@ var/const/CE_STABLE_THRESHOLD = 0.5
 
 		//Bleeding out
 		var/blood_max = 0
-		var/blood_loss_divisor = 30	//lower factor = more blood loss
+		var/blood_loss_divisor = 30.01	//lower factor = more blood loss
 
 		// Some species bleed out differently
 		blood_loss_divisor /= species.bloodloss_rate

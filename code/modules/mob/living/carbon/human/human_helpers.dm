@@ -108,7 +108,7 @@
 
 	return FBP_NONE
 
-/mob/living/carbon/human/proc/make_hud_overlays()
+/mob/living/carbon/human/make_hud_overlays()
 	hud_list[HEALTH_HUD]      = gen_hud_image(ingame_hud_med, src, "100", plane = PLANE_CH_HEALTH)
 	if(isSynthetic())
 		hud_list[STATUS_HUD]  = gen_hud_image(ingame_hud, src, "hudrobo", plane = PLANE_CH_STATUS)
@@ -123,6 +123,7 @@
 	hud_list[IMPTRACK_HUD]    = gen_hud_image(ingame_hud, src, "hudblank", plane = PLANE_CH_IMPTRACK)
 	hud_list[SPECIALROLE_HUD] = gen_hud_image(ingame_hud, src, "hudblank", plane = PLANE_CH_SPECIAL)
 	hud_list[STATUS_HUD_OOC]  = gen_hud_image(ingame_hud, src, "hudhealthy", plane = PLANE_CH_STATUS_OOC)
+	add_overlay(hud_list)
 
 /mob/living/carbon/human/recalculate_vis()
 	if(!vis_enabled || !plane_holder)
@@ -135,7 +136,7 @@
 
 	for(var/slot in slots)
 		var/obj/item/clothing/O = get_equipped_item(slot) //Change this type if you move the vision stuff to item or something.
-		if(O && O.enables_planes && (slot in O.plane_slots))
+		if(istype(O) && O.enables_planes && (slot in O.plane_slots))
 			compiled_vis |= O.enables_planes
 
 	//Check to see if we have a rig (ugh, blame rigs, desnowflake this)

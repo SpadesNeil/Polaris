@@ -1,6 +1,7 @@
 /obj/machinery/atmospherics/unary/vent_scrubber
 	icon = 'icons/atmos/vent_scrubber.dmi'
 	icon_state = "map_scrubber_off"
+	pipe_state = "scrubber"
 
 	name = "Air Scrubber"
 	desc = "Has a valve and pump attached to it"
@@ -119,7 +120,7 @@
 
 	return 1
 
-/obj/machinery/atmospherics/unary/vent_scrubber/initialize()
+/obj/machinery/atmospherics/unary/vent_scrubber/atmos_init()
 	..()
 	radio_filter_in = frequency==initial(frequency)?(RADIO_FROM_AIRALARM):null
 	radio_filter_out = frequency==initial(frequency)?(RADIO_TO_AIRALARM):null
@@ -283,8 +284,7 @@
 			"<span class='notice'>\The [user] unfastens \the [src].</span>", \
 			"<span class='notice'>You have unfastened \the [src].</span>", \
 			"You hear a ratchet.")
-		new /obj/item/pipe(loc, make_from=src)
-		qdel(src)
+		deconstruct()
 
 /obj/machinery/atmospherics/unary/vent_scrubber/examine(mob/user)
 	if(..(user, 1))

@@ -7,7 +7,7 @@
 	var/list/stating_laws = list()// Channels laws are currently being stated on
 	var/obj/item/device/radio/common_radio
 
-	var/list/hud_list[10]
+	has_huds = TRUE
 	var/list/speech_synthesizer_langs = list()	//which languages can be vocalized by the speech synthesizer
 
 	//Used in say.dm.
@@ -25,13 +25,13 @@
 	var/obj/item/weapon/card/id/idcard
 	var/idcard_type = /obj/item/weapon/card/id/synthetic
 
-	#define SEC_HUD 1 //Security HUD mode
-	#define MED_HUD 2 //Medical HUD mode
+	var/hudmode = null
 
 /mob/living/silicon/New()
 	silicon_mob_list |= src
 	..()
-	add_language("Galactic Common")
+	add_language(LANGUAGE_GALCOM)
+	set_default_language(all_languages[LANGUAGE_GALCOM])
 	init_id()
 	init_subsystems()
 
@@ -280,6 +280,8 @@
 				plane_holder.set_vis(VIS_CH_HEALTH,FALSE)
 			to_chat(src,"Sensor augmentations disabled.")
 
+	hudmode = sensor_type //This is checked in examine.dm on humans, so they can see medical/security records depending on mode
+
 /mob/living/silicon/verb/pose()
 	set name = "Set Pose"
 	set desc = "Sets a description which will be shown when someone examines you."
@@ -321,6 +323,8 @@
 /mob/living/silicon/proc/receive_alarm(var/datum/alarm_handler/alarm_handler, var/datum/alarm/alarm, was_raised)
 	if(!next_alarm_notice)
 		next_alarm_notice = world.time + SecondsToTicks(10)
+	if(alarm.hidden)
+		return
 
 	var/list/alarms = queued_alarms[alarm_handler]
 	if(was_raised)

@@ -23,7 +23,7 @@ var/global/list/robot_modules = list(
 	var/hide_on_manifest = 0
 	var/channels = list()
 	var/networks = list()
-	var/languages = list(LANGUAGE_SOL_COMMON = 1, LANGUAGE_TRADEBAND = 1, LANGUAGE_UNATHI = 0, LANGUAGE_SIIK = 0, LANGUAGE_SKRELLIAN = 0, LANGUAGE_GUTTER = 0, LANGUAGE_SCHECHI = 0, LANGUAGE_SIGN = 0)
+	var/languages = list(LANGUAGE_SOL_COMMON = 1, LANGUAGE_TRADEBAND = 1, LANGUAGE_UNATHI = 0, LANGUAGE_SIIK = 0, LANGUAGE_AKHANI = 0, LANGUAGE_SKRELLIAN = 0, LANGUAGE_GUTTER = 0, LANGUAGE_SCHECHI = 0, LANGUAGE_SIGN = 0, LANGUAGE_TERMINUS = 1)
 	var/sprites = list()
 	var/can_be_pushed = 1
 	var/no_slip = 0
@@ -211,7 +211,6 @@ var/global/list/robot_modules = list(
 
 /obj/item/weapon/robot_module/robot/medical/surgeon/New()
 	..()
-	src.modules += new /obj/item/borg/sight/hud/med(src)
 	src.modules += new /obj/item/device/healthanalyzer(src)
 	src.modules += new /obj/item/weapon/reagent_containers/borghypo/surgeon(src)
 	src.modules += new /obj/item/weapon/surgical/scalpel/cyborg(src)
@@ -246,10 +245,19 @@ var/global/list/robot_modules = list(
 	src.modules += N
 	src.modules += B
 
-/obj/item/weapon/robot_module/medical/robot/surgeon/respawn_consumable(var/mob/living/silicon/robot/R, var/amount)
+/obj/item/weapon/robot_module/robot/medical/surgeon/respawn_consumable(var/mob/living/silicon/robot/R, var/amount)
+
+	var/obj/item/weapon/reagent_containers/syringe/S = locate() in src.modules
+	if(S.mode == 2)
+		S.reagents.clear_reagents()
+		S.mode = initial(S.mode)
+		S.desc = initial(S.desc)
+		S.update_icon()
+
 	if(src.emag)
 		var/obj/item/weapon/reagent_containers/spray/PS = src.emag
 		PS.reagents.add_reagent("pacid", 2 * amount)
+
 	..()
 
 /obj/item/weapon/robot_module/robot/medical/crisis
@@ -273,7 +281,6 @@ var/global/list/robot_modules = list(
 
 /obj/item/weapon/robot_module/robot/medical/crisis/New()
 	..()
-	src.modules += new /obj/item/borg/sight/hud/med(src)
 	src.modules += new /obj/item/device/healthanalyzer(src)
 	src.modules += new /obj/item/device/reagent_scanner/adv(src)
 	src.modules += new /obj/item/roller_holder(src)
@@ -501,10 +508,10 @@ var/global/list/robot_modules = list(
 
 /obj/item/weapon/robot_module/robot/security/general/New()
 	..()
-	src.modules += new /obj/item/borg/sight/hud/sec(src)
 	src.modules += new /obj/item/weapon/handcuffs/cyborg(src)
 	src.modules += new /obj/item/weapon/melee/baton/robot(src)
 	src.modules += new /obj/item/weapon/gun/energy/taser/mounted/cyborg(src)
+	src.modules += new /obj/item/weapon/gun/energy/taser/xeno/sec/robot(src)
 	src.modules += new /obj/item/taperoll/police(src)
 	src.modules += new /obj/item/weapon/reagent_containers/spray/pepper(src)
 	src.emag = new /obj/item/weapon/gun/energy/laser/mounted(src)
@@ -566,12 +573,15 @@ var/global/list/robot_modules = list(
 					LANGUAGE_SOL_COMMON	= 1,
 					LANGUAGE_UNATHI		= 1,
 					LANGUAGE_SIIK		= 1,
+					LANGUAGE_AKHANI		= 1,
 					LANGUAGE_SKRELLIAN	= 1,
+					LANGUAGE_SKRELLIANFAR = 0,
 					LANGUAGE_ROOTLOCAL	= 0,
 					LANGUAGE_TRADEBAND	= 1,
 					LANGUAGE_GUTTER		= 1,
 					LANGUAGE_SCHECHI	= 1,
 					LANGUAGE_EAL		= 1,
+					LANGUAGE_TERMINUS	= 1,
 					LANGUAGE_SIGN		= 0
 					)
 
@@ -751,6 +761,18 @@ var/global/list/robot_modules = list(
 	var/obj/item/stack/cable_coil/cyborg/C = new /obj/item/stack/cable_coil/cyborg(src)	//Cable code, taken from engiborg,
 	C.synths = list(wire)
 	src.modules += C
+
+/obj/item/weapon/robot_module/robot/research/respawn_consumable(var/mob/living/silicon/robot/R, var/amount)
+
+	var/obj/item/weapon/reagent_containers/syringe/S = locate() in src.modules
+	if(S.mode == 2)
+		S.reagents.clear_reagents()
+		S.mode = initial(S.mode)
+		S.desc = initial(S.desc)
+		S.update_icon()
+
+	..()
+
 
 /obj/item/weapon/robot_module/robot/security/combat
 	name = "combat robot module"
