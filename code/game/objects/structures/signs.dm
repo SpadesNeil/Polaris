@@ -3,7 +3,7 @@
 	anchored = 1
 	opacity = 0
 	density = 0
-	layer = 3.5
+	layer = ABOVE_JUNK_LAYER
 	w_class = ITEMSIZE_NORMAL
 
 /obj/structure/sign/ex_act(severity)
@@ -156,6 +156,9 @@
 
 /obj/structure/sign/warning/docking_area
 	name = "\improper KEEP CLEAR: DOCKING AREA"
+
+/obj/structure/sign/warning/evac
+	name = "\improper KEEP CLEAR: EVAC DOCKING AREA"
 	icon_state = "evac"
 
 /obj/structure/sign/warning/engineering_access
@@ -425,3 +428,13 @@
 /obj/structure/sign/atmos/air
 	name = "\improper AIR"
 	icon_state = "atmos_air"
+
+/obj/structure/sign/poi/engineleft
+	name = "I.C.V."
+	desc = "The charred name of a cargo ship of some description."
+	icon_state = "poi_engine1"
+
+/obj/structure/sign/poi/engineright
+	name = "I.C.V."
+	desc = "The charred name of a cargo ship of some description."
+	icon_state = "poi_engine2"

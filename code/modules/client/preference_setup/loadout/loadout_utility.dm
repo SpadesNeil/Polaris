@@ -8,12 +8,16 @@
 	display_name = "clipboard"
 	path = /obj/item/weapon/clipboard
 
+/datum/gear/utility/tts_device
+	display_name = "text to speech device"
+	path = /obj/item/device/text_to_speech
+	cost = 3 //Not extremely expensive, but it's useful for mute chracters.
+
 /datum/gear/utility/communicator
 	display_name = "communicator selection"
 	path = /obj/item/device/communicator
 	cost = 0
 
-	display_name = "communicator watch"
 /datum/gear/utility/communicator/New()
 	..()
 	var/list/communicators = list()
@@ -31,9 +35,19 @@
 	path = /obj/item/weapon/book/codex/lore/vir
 	cost = 0
 
+/datum/gear/utility/news
+	display_name = "daedalus pocket newscaster"
+	path = /obj/item/weapon/book/codex/lore/news
+	cost = 0
+
 /datum/gear/utility/corp_regs
 	display_name = "corporate regulations and legal code"
 	path = /obj/item/weapon/book/codex/corp_regs
+	cost = 0
+
+/datum/gear/utility/robutt
+	display_name = "a buyer's guide to artificial bodies"
+	path = /obj/item/weapon/book/codex/lore/robutt
 	cost = 0
 
 /datum/gear/utility/folder_blue
@@ -111,11 +125,6 @@
 	slot = "implant"
 	exploitable = 1
 
-/datum/gear/utility/translator
-	display_name = "universal translator"
-	path = /obj/item/device/universal_translator
-	cost = 8
-
 /datum/gear/utility/pen
 	display_name = "Fountain Pen"
 	path = /obj/item/weapon/pen/fountain
@@ -126,5 +135,14 @@
 	cost = 4
 
 /datum/gear/utility/wheelchair/color/New()
+	..()
+	gear_tweaks = list(gear_tweak_free_color_choice)
+
+/datum/gear/utility/umbrella
+	display_name = "Umbrella"
+	path = /obj/item/weapon/melee/umbrella
+	cost = 3
+
+/datum/gear/utility/umbrella/New()
 	..()
 	gear_tweaks = list(gear_tweak_free_color_choice)

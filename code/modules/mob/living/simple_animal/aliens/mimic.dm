@@ -24,7 +24,7 @@
 	harm_intent_damage = 5
 	melee_damage_lower = 8
 	melee_damage_upper = 12
-	attacktext = "attacked"
+	attacktext = list("attacked")
 	attack_sound = 'sound/weapons/bite.ogg'
 
 	min_oxy = 0
@@ -48,6 +48,12 @@
 	..()
 	qdel(src)
 
+/mob/living/simple_animal/hostile/mimic/MouseEntered(location, control, params)
+	..()
+	closeToolTip(usr) 
+	// ideally, we'd remove the code in ..() that opens the tooltip, 
+	// but then we'd need to duplicate all the other code in ..()
+
 //
 // Crate Mimic
 //
@@ -55,7 +61,7 @@
 // Aggro when you try to open them. Will also pickup loot when spawns and drop it when dies.
 /mob/living/simple_animal/hostile/mimic/crate
 
-	attacktext = "bitten"
+	attacktext = list("bitten")
 
 	stop_automated_movement = 1
 	wander = 0
@@ -63,7 +69,7 @@
 
 // Pickup loot
 /mob/living/simple_animal/hostile/mimic/crate/initialize()
-	..()
+	. = ..()
 	for(var/obj/item/I in loc)
 		I.forceMove(src)
 

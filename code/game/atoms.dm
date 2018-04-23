@@ -1,5 +1,5 @@
 /atom
-	layer = 2
+	layer = TURF_LAYER //This was here when I got here. Why though?
 	var/level = 2
 	var/flags = 0
 	var/list/fingerprints
@@ -22,14 +22,58 @@
 	// replaced by OPENCONTAINER flags and atom/proc/is_open_container()
 	///Chemistry.
 
+	// Overlays
+	var/list/our_overlays	//our local copy of (non-priority) overlays without byond magic. Use procs in SSoverlays to manipulate
+	var/list/priority_overlays	//overlays that should remain on top and not normally removed when using cut_overlay functions, like c4.
+
 	//Detective Work, used for the duplicate data points kept in the scanners
 	var/list/original_atom
+	// Track if we are already had initialize() called to prevent double-initialization.
+	var/initialized = FALSE
 
-//atom creation method that preloads variables at creation
-/atom/New()
+/atom/New(loc, ...)
 	// Don't call ..() unless /datum/New() ever exists
+
+	// During dynamic mapload (reader.dm) this assigns the var overrides from the .dmm file
+	// Native BYOND maploading sets those vars before invoking New(), by doing this FIRST we come as close to that behavior as we can.
 	if(use_preloader && (src.type == _preloader.target_path))//in case the instanciated atom is creating other atoms in New()
 		_preloader.load(src)
+
+	// Pass our arguments to InitAtom so they can be passed to initialize(), but replace 1st with if-we're-during-mapload.
+	var/do_initialize = SSatoms && SSatoms.initialized // Workaround our non-ideal initialization order: SSatoms may not exist yet.
+	//var/do_initialize = SSatoms.initialized
+	if(do_initialize > INITIALIZATION_INSSATOMS)
+		args[1] = (do_initialize == INITIALIZATION_INNEW_MAPLOAD)
+		if(SSatoms.InitAtom(src, args))
+			// We were deleted. No sense continuing
+			return
+
+	// Uncomment if anything ever uses the return value of SSatoms.InitializeAtoms ~Leshana
+	// If a map is being loaded, it might want to know about newly created objects so they can be handled.
+	// var/list/created = SSatoms.created_atoms
+	// if(created)
+	// 	created += src
+
+// Note: I removed "auto_init" feature (letting types disable auto-init) since it shouldn't be needed anymore.
+// 	You can replicate the same by checking the value of the first parameter to initialize() ~Leshana
+
+// Called after New if the map is being loaded, with mapload = TRUE
+// Called from base of New if the map is not being loaded, with mapload = FALSE
+// This base must be called or derivatives must set initialized to TRUE
+// Must not sleep!
+// Other parameters are passed from New (excluding loc), this does not happen if mapload is TRUE
+// Must return an Initialize hint. Defined in code/__defines/subsystems.dm
+/atom/proc/initialize(mapload, ...)
+	if(QDELETED(src))
+		crash_with("GC: -- [type] had initialize() called after qdel() --")
+	if(initialized)
+		crash_with("Warning: [src]([type]) initialized multiple times!")
+	initialized = TRUE
+	return INITIALIZE_HINT_NORMAL
+
+// Called after all object's normal initialize() if initialize() returns INITIALIZE_HINT_LATELOAD
+/atom/proc/LateInitialize()
+	return
 
 /atom/proc/reveal_blood()
 	return
@@ -349,6 +393,7 @@
 /atom/proc/add_vomit_floor(mob/living/carbon/M as mob, var/toxvomit = 0)
 	if( istype(src, /turf/simulated) )
 		var/obj/effect/decal/cleanable/vomit/this = new /obj/effect/decal/cleanable/vomit(src)
+		this.virus2 = virus_copylist(M.virus2)
 
 		// Make toxins vomit look different
 		if(toxvomit)
@@ -394,20 +439,20 @@
 // blind_message (optional) is what blind people will hear e.g. "You hear something!"
 /atom/proc/visible_message(var/message, var/blind_message)
 
-	var/list/see = get_mobs_or_objects_in_view(world.view,src) | viewers(get_turf(src), null)
+	var/list/see = get_mobs_and_objs_in_view_fast(get_turf(src),world.view,remote_ghosts = FALSE)
 
-	for(var/I in see)
-		if(isobj(I))
-			//spawn(0)
-			//if(I) //It's possible that it could be deleted in the meantime.
-			var/obj/O = I
-			O.show_message(message, 1, blind_message, 2)
-		else if(ismob(I))
-			var/mob/M = I
-			if(M.see_invisible >= invisibility && MOB_CAN_SEE_PLANE(M, plane)) // Cannot view the invisible
-				M.show_message(message, 1, blind_message, 2)
-			else if (blind_message)
-				M.show_message(blind_message, 2)
+	var/list/seeing_mobs = see["mobs"]
+	var/list/seeing_objs = see["objs"]
+
+	for(var/obj in seeing_objs)
+		var/obj/O = obj
+		O.show_message(message, 1, blind_message, 2)
+	for(var/mob in seeing_mobs)
+		var/mob/M = mob
+		if(M.see_invisible >= invisibility && MOB_CAN_SEE_PLANE(M, plane))
+			M.show_message(message, 1, blind_message, 2)
+		else if(blind_message)
+			M.show_message(blind_message, 2)
 
 // Show a message to all mobs and objects in earshot of this atom
 // Use for objects performing audible actions
@@ -416,20 +461,20 @@
 // hearing_distance (optional) is the range, how many tiles away the message can be heard.
 /atom/proc/audible_message(var/message, var/deaf_message, var/hearing_distance)
 
-	var/range = world.view
-	if(hearing_distance)
-		range = hearing_distance
-	var/list/hear = get_mobs_or_objects_in_view(range,src)
+	var/range = hearing_distance || world.view
+	var/list/hear = get_mobs_and_objs_in_view_fast(get_turf(src),range,remote_ghosts = FALSE)
 
-	for(var/I in hear)
-		if(isobj(I))
-			spawn(0)
-				if(I) //It's possible that it could be deleted in the meantime.
-					var/obj/O = I
-					O.show_message(message, 2, deaf_message, 1)
-		else if(ismob(I))
-			var/mob/M = I
-			M.show_message(message, 2, deaf_message, 1)
+	var/list/hearing_mobs = hear["mobs"]
+	var/list/hearing_objs = hear["objs"]
+
+	for(var/obj in hearing_objs)
+		var/obj/O = obj
+		O.show_message(message, 2, deaf_message, 1)
+
+	for(var/mob in hearing_mobs)
+		var/mob/M = mob
+		var/msg = message
+		M.show_message(msg, 2, deaf_message, 1)
 
 /atom/movable/proc/dropInto(var/atom/destination)
 	while(istype(destination))
@@ -457,3 +502,18 @@
 	if(A && A.has_gravity())
 		return TRUE
 	return FALSE
+
+/atom/proc/drop_location()
+	var/atom/L = loc
+	if(!L)
+		return null
+	return L.AllowDrop() ? L : get_turf(L)
+
+/atom/proc/AllowDrop()
+	return FALSE
+
+/atom/proc/get_nametag_name(mob/user)
+	return name
+
+/atom/proc/get_nametag_desc(mob/user)
+	return "" //Desc itself is often too long to use

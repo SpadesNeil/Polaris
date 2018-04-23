@@ -19,6 +19,8 @@
 
 	var/label_text = ""
 
+	var/list/prefill = null	//Reagents to fill the container with on New(), formatted as "reagentID" = quantity
+
 	var/list/can_be_placed_into = list(
 		/obj/machinery/chem_master/,
 		/obj/machinery/chemical_dispenser,
@@ -47,6 +49,11 @@
 
 /obj/item/weapon/reagent_containers/glass/New()
 	..()
+	if(LAZYLEN(prefill))
+		for(var/R in prefill)
+			reagents.add_reagent(R,prefill[R])
+		prefill = null
+		update_icon()
 	base_name = name
 	base_desc = desc
 
@@ -222,18 +229,14 @@
 	volume = 30
 	w_class = ITEMSIZE_TINY
 	amount_per_transfer_from_this = 10
-	possible_transfer_amounts = list(5,10,15,25)
+	possible_transfer_amounts = list(5,10,15,30)
 	flags = OPENCONTAINER
 
-/obj/item/weapon/reagent_containers/glass/beaker/cryoxadone/New()
-	..()
-	reagents.add_reagent("cryoxadone", 30)
-	update_icon()
+/obj/item/weapon/reagent_containers/glass/beaker/cryoxadone
+	prefill = list("cryoxadone" = 30)
 
-/obj/item/weapon/reagent_containers/glass/beaker/sulphuric/New()
-		..()
-		reagents.add_reagent("sacid", 60)
-		update_icon()
+/obj/item/weapon/reagent_containers/glass/beaker/sulphuric
+	prefill = list("sacid" = 60)
 
 /obj/item/weapon/reagent_containers/glass/bucket
 	desc = "It's a bucket."
@@ -263,6 +266,18 @@
 		user.drop_from_inventory(src)
 		qdel(src)
 		return
+	else if(istype(D, /obj/item/stack/material) && D.get_material_name() == DEFAULT_WALL_MATERIAL)
+		var/obj/item/stack/material/M = D
+		if (M.use(1))
+			var/obj/item/weapon/secbot_assembly/edCLN_assembly/B = new /obj/item/weapon/secbot_assembly/edCLN_assembly
+			B.loc = get_turf(src)
+			to_chat(user, "<span class='notice'>You armed the robot frame.</span>")
+			if (user.get_inactive_hand()==src)
+				user.remove_from_mob(src)
+				user.put_in_inactive_hand(B)
+			qdel(src)
+		else
+			to_chat(user, "<span class='warning'>You need one sheet of metal to arm the robot frame.</span>")
 	else if(istype(D, /obj/item/weapon/mop))
 		if(reagents.total_volume < 1)
 			to_chat(user, "<span class='warning'>\The [src] is empty!</span>")
@@ -270,7 +285,6 @@
 			reagents.trans_to_obj(D, 5)
 			to_chat(user, "<span class='notice'>You wet \the [D] in \the [src].</span>")
 			playsound(loc, 'sound/effects/slosh.ogg', 25, 1)
-		return
 	else
 		return ..()
 

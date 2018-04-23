@@ -43,7 +43,7 @@
 	desc = "You're rather inexperienced with guns, you've never used one in your life, or you're just really rusty.  \
 	Regardless, you find it quite difficult to land shots where you wanted them to go."
 
-	accuracy = -1
+	accuracy = -15
 	accuracy_dispersion = 1
 
 /datum/modifier/trait/high_metabolism
@@ -64,13 +64,13 @@
 	name = "Larger"
 	desc = "Your body is larger than average."
 
-	icon_scale_percent = 1.2
+	icon_scale_percent = 1.1
 
 /datum/modifier/trait/large
 	name = "Large"
 	desc = "Your body is a bit larger than average."
 
-	icon_scale_percent = 1.1
+	icon_scale_percent = 1.05
 
 /datum/modifier/trait/small
 	name = "Small"

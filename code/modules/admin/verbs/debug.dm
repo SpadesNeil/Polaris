@@ -327,6 +327,36 @@
 
 	usr << browse(dellog.Join(), "window=dellog")
 
+/client/proc/cmd_display_init_log()
+	set category = "Debug"
+	set name = "Display Initialize() Log"
+	set desc = "Displays a list of things that didn't handle Initialize() properly"
+
+	if(!check_rights(R_DEBUG))	return
+	src << browse(replacetext(SSatoms.InitLog(), "\n", "<br>"), "window=initlog")
+
+/client/proc/cmd_display_overlay_log()
+	set category = "Debug"
+	set name = "Display overlay Log"
+	set desc = "Display SSoverlays log of everything that's passed through it."
+
+	if(!check_rights(R_DEBUG))	return
+	render_stats(SSoverlays.stats, src)
+
+// Render stats list for round-end statistics.
+/proc/render_stats(list/stats, user, sort = /proc/cmp_generic_stat_item_time)
+	sortTim(stats, sort, TRUE)
+
+	var/list/lines = list()
+	for (var/entry in stats)
+		var/list/data = stats[entry]
+		lines += "[entry] => [num2text(data[STAT_ENTRY_TIME], 10)]ms ([data[STAT_ENTRY_COUNT]]) (avg:[num2text(data[STAT_ENTRY_TIME]/(data[STAT_ENTRY_COUNT] || 1), 99)])"
+
+	if (user)
+		user << browse("<ol><li>[lines.Join("</li><li>")]</li></ol>", "window=[url_encode("stats:\ref[stats]")]")
+	else
+		. = lines.Join("\n")
+
 /client/proc/cmd_admin_grantfullaccess(var/mob/M in mob_list)
 	set category = "Admin"
 	set name = "Grant Full Access"
@@ -378,10 +408,15 @@
 		qdel(adminmob)
 	feedback_add_details("admin_verb","ADC") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
 
+/client/proc/take_picture(var/atom/A in world)
+	set name = "Save PNG"
+	set category = "Debug"
+	set desc = "Opens a dialog to save a PNG of any object in the game."
 
+	if(!check_rights(R_DEBUG))
+		return
 
-
-
+	downloadImage(A)
 
 /client/proc/cmd_admin_areatest()
 	set category = "Mapping"
@@ -517,11 +552,15 @@
 			E.state = 2
 			E.connect_to_network()
 			E.active = TRUE
-
 	for(var/obj/machinery/field_generator/F in world)
 		if(istype(get_area(F), /area/space))
 			F.Varedit_start = 1
-
+	for(var/obj/machinery/power/grounding_rod/GR in world)
+		GR.anchored = TRUE
+		GR.update_icon()
+	for(var/obj/machinery/power/tesla_coil/TC in world)
+		TC.anchored = TRUE
+		TC.update_icon()
 	for(var/obj/structure/particle_accelerator/PA in world)
 		PA.anchored = TRUE
 		PA.construction_state = 3
@@ -530,25 +569,6 @@
 		PA.anchored = TRUE
 		PA.construction_state = 3
 		PA.update_icon()
-
-	spawn(30)
-		for(var/obj/machinery/the_singularitygen/G in world)
-			if(G.anchored)
-				var/obj/singularity/S = new /obj/singularity(get_turf(G), 50)
-				spawn(0)
-					qdel(G)
-				S.energy = 1750
-				S.current_size = 7
-				S.icon = 'icons/effects/224x224.dmi'
-				S.icon_state = "singularity_s7"
-				S.pixel_x = -96
-				S.pixel_y = -96
-				S.grav_pull = 0
-				//S.consume_range = 3
-				S.dissipate = 0
-				//S.dissipate_delay = 10
-				//S.dissipate_track = 0
-				//S.dissipate_strength = 10
 
 	for(var/obj/machinery/power/rad_collector/Rad in world)
 		if(Rad.anchored)

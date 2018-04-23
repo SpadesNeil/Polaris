@@ -7,6 +7,7 @@
 	taste_mult = 4
 	reagent_state = SOLID
 	metabolism = REM * 4
+	ingest_met = REM * 4
 	var/nutriment_factor = 30 // Per unit
 	var/injectable = 0
 	color = "#664330"
@@ -252,6 +253,7 @@
 	reagent_state = SOLID
 	color = "#FFFFFF"
 	overdose = REAGENTS_OVERDOSE
+	ingest_met = REM
 
 /datum/reagent/blackpepper
 	name = "Black Pepper"
@@ -259,6 +261,7 @@
 	description = "A powder ground from peppercorns. *AAAACHOOO*"
 	taste_description = "pepper"
 	reagent_state = SOLID
+	ingest_met = REM
 	color = "#000000"
 
 /datum/reagent/enzyme
@@ -278,6 +281,7 @@
 	taste_description = "mint"
 	taste_mult = 1.5
 	reagent_state = LIQUID
+	ingest_met = REM
 	color = "#B31008"
 
 /datum/reagent/frostoil/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
@@ -305,6 +309,7 @@
 	taste_description = "hot peppers"
 	taste_mult = 1.5
 	reagent_state = LIQUID
+	ingest_met = REM
 	color = "#B31008"
 
 /datum/reagent/capsaicin/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
@@ -338,6 +343,7 @@
 	taste_mult = 10
 	reagent_state = LIQUID
 	touch_met = 50 // Get rid of it quickly
+	ingest_met = REM
 	color = "#B31008"
 
 /datum/reagent/condensedcapsaicin/affect_blood(var/mob/living/carbon/M, var/alien, var/removed)
@@ -421,6 +427,7 @@
 	name = "Drink"
 	id = "drink"
 	description = "Uh, some kind of drink."
+	ingest_met = REM
 	reagent_state = LIQUID
 	color = "#E78108"
 	var/nutrition = 0 // Per unit
@@ -442,6 +449,9 @@
 		M.bodytemperature = min(310, M.bodytemperature + (adj_temp * TEMPERATURE_DAMAGE_COEFFICIENT))
 	if(adj_temp < 0 && M.bodytemperature > 310)
 		M.bodytemperature = min(310, M.bodytemperature - (adj_temp * TEMPERATURE_DAMAGE_COEFFICIENT))
+
+/datum/reagent/drink/overdose(var/mob/living/carbon/M, var/alien) //Add special interactions here in the future if desired.
+	..()
 
 // Juices
 
@@ -578,7 +588,7 @@
 
 /datum/reagent/drink/juice/potato
 	name = "Potato Juice"
-	id = "potato"
+	id = "potatojuice"
 	description = "Juice of the potato. Bleh."
 	taste_description = "potatoes"
 	nutrition = 2
@@ -1018,7 +1028,7 @@
 
 /datum/reagent/drink/milkshake/berryshake
 	name = "Berry Milkshake"
-	id = "Berryshake"
+	id = "berryshake"
 	description = "A refreshing berry milkshake."
 	taste_description = "cold refreshing berries and cream"
 	color = "#ffb2b2" // rgb(255, 178, 178)
@@ -1037,10 +1047,13 @@
 	adj_dizzy = -5
 	adj_drowsy = -3
 	adj_sleepy = -2
-	overdose = 45
+	
 
 	glass_name = "Coffee Milkshake"
 	glass_desc = "An energizing coffee milkshake, perfect for hot days at work.."
+
+/datum/reagent/drink/milkshake/coffeeshake/overdose(var/mob/living/carbon/M, var/alien)
+	M.make_jittery(5) 
 
 /datum/reagent/drink/rewriter
 	name = "Rewriter"
@@ -1604,6 +1617,28 @@
 
 	glass_name = "wine"
 	glass_desc = "A very classy looking drink."
+
+/datum/reagent/ethanol/wine/champagne
+	name = "Champagne"
+	id = "champagne"
+	description = "A sparkling wine made with Pinot Noir, Pinot Meunier, and Chardonnay."
+	taste_description = "fizzy bitter sweetness"
+	color = "#D1B166"
+
+	glass_name = "champagne"
+	glass_desc = "An even classier looking drink."
+
+
+/datum/reagent/ethanol/cider
+	name = "Cider"
+	id = "cider"
+	description = "Hard? Soft? No-one knows but it'll get you drunk."
+	taste_description = "tartness"
+	color = "#CE9C00" // rgb: 206, 156, 0
+	strength = 10
+
+	glass_name = "cider"
+	glass_desc = "The second most Irish drink."
 
 // Cocktails
 
@@ -2486,13 +2521,13 @@
 /datum/reagent/ethanol/euphoria
 	name = "Euphoria"
 	id = "euphoria"
-	description = "Invented by a Eutopian marketing team, this is one of the most expensive cocktails in existance."
+	description = "Invented by a Eutopian marketing team, this is one of the most expensive cocktails in existence."
 	taste_description = "impossibly rich alcohol"
 	color = "#614126"
 	strength = 9
 
 	glass_name = "Euphoria"
-	glass_desc = "Invented by a Eutopian marketing team, this is one of the most expensive cocktails in existance."
+	glass_desc = "Invented by a Eutopian marketing team, this is one of the most expensive cocktails in existence."
 
 /datum/reagent/ethanol/xanaducannon
 	name = "Xanadu Cannon"
@@ -2580,7 +2615,7 @@
 /datum/reagent/ethanol/winebrandy
 	name = "Wine Brandy"
 	id = "winebrandy"
-	description = "An premium spirit made from distilled wine."
+	description = "A premium spirit made from distilled wine."
 	taste_description = "very sweet dried fruit with many elegant notes"
 	color = "#4C130B" // rgb(76,19,11)
 	strength = 20
@@ -2732,7 +2767,7 @@
 	color = "#a0692e" // rgb(160, 105, 46)
 	strength = 20
 
-	glass_name = "Whisker Sour"
+	glass_name = "Whiskey Sour"
 	glass_desc = "A smokey, refreshing lemoned whiskey."
 
 /datum/reagent/ethanol/oldfashioned

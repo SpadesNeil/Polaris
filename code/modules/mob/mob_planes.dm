@@ -12,6 +12,7 @@
 
 	//It'd be nice to lazy init these but some of them are important to just EXIST. Like without ghost planemaster, you can see ghosts. Go figure.
 	plane_masters[VIS_FULLBRIGHT] 	= new /obj/screen/plane_master/fullbright						//Lighting system (lighting_overlay objects)
+	plane_masters[VIS_LIGHTING] 	= new /obj/screen/plane_master/lighting							//Lighting system (but different!)
 	plane_masters[VIS_GHOSTS] 		= new /obj/screen/plane_master/ghosts							//Ghosts!
 	plane_masters[VIS_AI_EYE]		= new /obj/screen/plane_master{plane = PLANE_AI_EYE}			//AI Eye!
 
@@ -33,14 +34,14 @@
 	plane_masters[VIS_D_COLORBLIND] = new /obj/screen/plane_master/colorblindness					//Colorblindness (affects world)
 	plane_masters[VIS_D_COLORBLINDI]= new /obj/screen/plane_master/colorblindness/items 			//Colorblindness (items in HUD, subplane of above, don't toggle)
 
+	plane_masters[VIS_MESONS]		= new /obj/screen/plane_master{plane = PLANE_MESONS} 			//Meson-specific things like open ceilings.
+
 	..()
 
 /datum/plane_holder/Destroy()
-	if(my_mob)
-		my_mob.plane_holder = null
-		my_mob = null
-	plane_masters.Cut() //Goodbye my children, be free
-	..() //We will get qdel'd, as there will not be references to us, then our planelets will disappear on their own.
+	my_mob = null
+	qdel_null_list(plane_masters) //Goodbye my children, be free
+	return ..()
 
 /datum/plane_holder/proc/set_vis(var/which = null, var/state = FALSE)
 	ASSERT(which)
@@ -93,6 +94,9 @@
 	var/invis_toggle = FALSE
 	var/list/sub_planes
 
+/obj/screen/plane_master/New()
+	..(null) //Never be in anything ever.
+
 /obj/screen/plane_master/proc/set_desired_alpha(var/new_alpha)
 	if(new_alpha != alpha && new_alpha > 0 && new_alpha <= 255)
 		desired_alpha = new_alpha
@@ -131,11 +135,16 @@
 //Lighting is weird and has matrix shenanigans. Think of this as turning on/off darkness.
 /obj/screen/plane_master/fullbright
 	plane = PLANE_LIGHTING
-	layer = LIGHTING_LAYER
+	layer = LAYER_HUD_BASE+1 // This MUST be above the lighting plane_master
 	color = null //To break lighting when visible (this is sorta backwards)
-	alpha = 255 //Starts full opaque
-	invisibility = 101 //But invisible
+	alpha = 0 //Starts full opaque
+	invisibility = 101
 	invis_toggle = TRUE
+
+/obj/screen/plane_master/lighting
+	plane = PLANE_LIGHTING
+	blend_mode = BLEND_MULTIPLY
+	alpha = 255
 
 /////////////////
 //Ghosts has a special alpha level
