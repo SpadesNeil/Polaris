@@ -46,7 +46,7 @@ SUBSYSTEM_DEF(atoms)
 				CHECK_TICK
 	else
 		count = 0
-		for(var/atom/A in world)
+		for(var/atom/A in world) // This must be world, since this operation adds all the atoms to their specific lists.
 			if(!A.initialized)
 				InitAtom(A, mapload_arg)
 				++count
@@ -77,7 +77,7 @@ SUBSYSTEM_DEF(atoms)
 
 	var/start_tick = world.time
 
-	var/result = A.initialize(arglist(arguments))
+	var/result = A.Initialize(arglist(arguments))
 
 	if(start_tick != world.time)
 		BadInitializeCalls[the_type] |= BAD_INIT_SLEPT

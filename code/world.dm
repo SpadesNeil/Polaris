@@ -62,6 +62,8 @@ var/global/datum/global_init/init = new ()
 	if(config && config.log_runtime)
 		log = file("data/logs/runtime/[time2text(world.realtime,"YYYY-MM-DD-(hh-mm-ss)")]-runtime.log")
 
+	GLOB.timezoneOffset = text2num(time2text(0,"hh")) * 36000
+
 	callHook("startup")
 	//Emergency Fix
 	load_mods()
@@ -82,34 +84,6 @@ var/global/datum/global_init/init = new ()
 	// This is kinda important. Set up details of what the hell things are made of.
 	populate_material_list()
 
-	// Loads all the pre-made submap templates.
-	load_map_templates()
-
-	if(config.generate_map)
-		if(using_map.perform_map_generation())
-			using_map.refresh_mining_turfs()
-/*
-	if(config.generate_asteroid)
-		// These values determine the specific area that the map is applied to.
-		// Because we do not use Bay's default map, we check the config file to see if custom parameters are needed, so we need to avoid hardcoding.
-		if(config.asteroid_z_levels)
-			for(var/z_level in config.asteroid_z_levels)
-				// In case we got fed a string instead of a number...
-				z_level = text2num(z_level)
-				if(!isnum(z_level))
-					// If it's still not a number, we probably got fed some nonsense string.
-					admin_notice("<span class='danger'>Error: ASTEROID_Z_LEVELS config wasn't given a number.</span>")
-				// Now for the actual map generating.  This occurs for every z-level defined in the config.
-				new /datum/random_map/automata/cave_system(null,1,1,z_level,300,300)
-				// Let's add ore too.
-				new /datum/random_map/noise/ore(null, 1, 1, z_level, 64, 64)
-		else
-			admin_notice("<span class='danger'>Error: No asteroid z-levels defined in config!</span>")
-		// Update all turfs to ensure everything looks good post-generation. Yes,
-		// it's brute-forcey, but frankly the alternative is a mine turf rewrite.
-		for(var/turf/simulated/mineral/M in world) // Ugh.
-			M.update_icon()
-*/
 	// Create frame types.
 	populate_frame_types()
 
@@ -188,7 +162,10 @@ var/world_topic_spam_protect_time = world.timeofday
 
 			s["players"] = players.len
 			s["playerlist"] = list2params(players)
-			s["admins"] = admins.len
+			var/list/adm = get_admin_counts()
+			var/list/presentmins = adm["present"]
+			var/list/afkmins = adm["afk"]
+			s["admins"] = presentmins.len + afkmins.len //equivalent to the info gotten from adminwho
 			s["adminlist"] = list2params(admins)
 		else
 			var/n = 0
@@ -435,19 +412,27 @@ var/world_topic_spam_protect_time = world.timeofday
 			return "Database connection failed or not set up"
 
 
-/world/Reboot(var/reason)
+/world/Reboot(reason = 0, fast_track = FALSE)
 	/*spawn(0)
 		world << sound(pick('sound/AI/newroundsexy.ogg','sound/misc/apcdestroyed.ogg','sound/misc/bangindonk.ogg')) // random end sounds!! - LastyBatsy
 		*/
+	if (reason || fast_track) //special reboot, do none of the normal stuff
+		if (usr)
+			log_admin("[key_name(usr)] Has requested an immediate world restart via client side debugging tools")
+			message_admins("[key_name_admin(usr)] Has requested an immediate world restart via client side debugging tools")
+			world << "<span class='boldannounce'>[key_name_admin(usr)] has requested an immediate world restart via client side debugging tools</span>"
 
-	processScheduler.stop()
-	Master.Shutdown()	//run SS shutdowns
+		else
+			world << "<span class='boldannounce'>Rebooting world immediately due to host request</span>"
+	else
+		processScheduler.stop()
+		Master.Shutdown()	//run SS shutdowns
+		for(var/client/C in clients)
+			if(config.server)	//if you set a server location in config.txt, it sends you there instead of trying to reconnect to the same world address. -- NeoFite
+				C << link("byond://[config.server]")
 
-	for(var/client/C in clients)
-		if(config.server)	//if you set a server location in config.txt, it sends you there instead of trying to reconnect to the same world address. -- NeoFite
-			C << link("byond://[config.server]")
-
-	..(reason)
+	log_world("World rebooted at [time_stamp()]")
+	..()
 
 /hook/startup/proc/loadMode()
 	world.load_mode()
@@ -676,5 +661,18 @@ proc/establish_old_db_connection()
 		return setup_old_database_connection()
 	else
 		return 1
+
+// Things to do when a new z-level was just made.
+/world/proc/max_z_changed()
+	if(!islist(GLOB.players_by_zlevel))
+		GLOB.players_by_zlevel = new /list(world.maxz, 0)
+	while(GLOB.players_by_zlevel.len < world.maxz)
+		GLOB.players_by_zlevel.len++
+		GLOB.players_by_zlevel[GLOB.players_by_zlevel.len] = list()
+
+// Call this to make a new blank z-level, don't modify maxz directly.
+/world/proc/increment_max_z()
+	maxz++
+	max_z_changed()
 
 #undef FAILED_DB_CONNECTION_CUTOFF

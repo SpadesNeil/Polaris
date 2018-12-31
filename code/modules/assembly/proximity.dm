@@ -25,11 +25,11 @@
 /obj/item/device/assembly/prox_sensor/toggle_secure()
 	secured = !secured
 	if(secured)
-		processing_objects.Add(src)
+		START_PROCESSING(SSobj, src)
 	else
 		scanning = 0
 		timing = 0
-		processing_objects.Remove(src)
+		STOP_PROCESSING(SSobj, src)
 	update_icon()
 	return secured
 
@@ -39,7 +39,7 @@
 		log_debug("DEBUG: HasProximity called with [AM] on [src] ([usr]).")
 		return
 	if (istype(AM, /obj/effect/beam))	return
-	if (AM.move_speed < 12)	sense()
+	if (!isobserver(AM) && AM.move_speed < 12)	sense()
 	return
 
 

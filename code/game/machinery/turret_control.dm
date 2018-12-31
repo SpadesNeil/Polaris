@@ -45,13 +45,13 @@
 			A.turret_controls -= src
 	..()
 
-/obj/machinery/turretid/initialize()
+/obj/machinery/turretid/Initialize()
 	if(!control_area)
 		control_area = get_area(src)
 	else if(ispath(control_area))
 		control_area = locate(control_area)
 	else if(istext(control_area))
-		for(var/area/A in world)
+		for(var/area/A in all_areas)
 			if(A.name && A.name==control_area)
 				control_area = A
 				break
@@ -137,7 +137,7 @@
 
 		data["settings"] = settings
 
-	ui = nanomanager.try_update_ui(user, src, ui_key, ui, data, force_open)
+	ui = GLOB.nanomanager.try_update_ui(user, src, ui_key, ui, data, force_open)
 	if(!ui)
 		ui = new(user, src, ui_key, "turret_control.tmpl", "Turret Controls", 500, 300)
 		ui.set_initial_data(data)

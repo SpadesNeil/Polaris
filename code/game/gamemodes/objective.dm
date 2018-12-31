@@ -524,7 +524,7 @@ datum/objective/steal
 						if(istype(M, /mob/living/silicon/ai) && M.stat != 2) //See if any AI's are alive inside that card.
 							return 1
 
-				for(var/mob/living/silicon/ai/ai in world)
+				for(var/mob/living/silicon/ai/ai in mob_list)
 					var/turf/T = get_turf(ai)
 					if(istype(T))
 						var/area/check_area = get_area(ai)
@@ -808,7 +808,7 @@ datum/objective/heist/salvage
 
 /datum/objective/borer_survive/check_completion()
 	if(owner)
-		var/mob/living/simple_animal/borer/B = owner
+		var/mob/living/simple_mob/animal/borer/B = owner
 		if(istype(B) && B.stat < 2 && B.host && B.host.stat < 2) return 1
 	return 0
 
@@ -817,7 +817,7 @@ datum/objective/heist/salvage
 
 /datum/objective/borer_reproduce/check_completion()
 	if(owner && owner.current)
-		var/mob/living/simple_animal/borer/B = owner.current
+		var/mob/living/simple_mob/animal/borer/B = owner.current
 		if(istype(B) && B.has_reproduced) return 1
 	return 0
 

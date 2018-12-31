@@ -197,7 +197,7 @@
 	desc = "This is an unusual plant. It's bulbous ends emit a soft blue light."
 	icon_state = "plant-09"
 	light_range = 2
-	light_power = 1
+	light_power = 0.6
 	light_color = "#33CCFF"
 
 /obj/structure/flora/pottedplant/orientaltree
@@ -255,7 +255,7 @@
 	desc = "This is a subterranean plant. It's bulbous ends glow faintly."
 	icon_state = "plant-20"
 	light_range = 2
-	light_power = 1
+	light_power = 0.6
 	light_color = "#FF6633"
 
 /obj/structure/flora/pottedplant/minitree
@@ -301,10 +301,10 @@
 	desc = "This is a subterranean plant. It's bulbous ends glow faintly."
 	icon_state = "glowplant"
 	light_range = 2
-	light_power = 1
+	light_power = 0.6
 	light_color = "#FF6633"
 
-/obj/structure/flora/sif/subterranean/initialize()
+/obj/structure/flora/sif/subterranean/Initialize()
 	icon_state = "[initial(icon_state)][rand(1,2)]"
 	. = ..()
 
@@ -313,6 +313,6 @@
 	desc = "This is a mysterious looking plant. They kind of look like eyeballs. Creepy."
 	icon_state = "eyeplant"
 
-/obj/structure/flora/sif/eyes/initialize()
+/obj/structure/flora/sif/eyes/Initialize()
 	icon_state = "[initial(icon_state)][rand(1,3)]"
 	. = ..()

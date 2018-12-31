@@ -117,7 +117,7 @@ Programs are a file that can be executed
 /*
 	The computer object will transfer process() calls to the program.
 */
-/datum/file/program/proc/process()
+/datum/file/program/process()
 	if(refresh && computer && !computer.stat)
 		computer.updateDialog()
 		update_icon()
@@ -228,10 +228,10 @@ Programs are a file that can be executed
 	//
 	if("eject_card" in href_list)
 		if(computer.cardslot)
-			if(computer.cardslot.dualslot && href_list["eject_card"] == "writer")
-				computer.cardslot.remove(computer.cardslot.writer)
+			if(istype(computer.cardslot, /obj/item/part/computer/cardslot/dual) && href_list["eject_card"] == "writer")
+				computer.cardslot.remove(usr)
 			else
-				computer.cardslot.remove(computer.cardslot.reader)
+				computer.cardslot.remove(usr)
 		return 1
 	//
 	// usage: runfile=\ref[file]

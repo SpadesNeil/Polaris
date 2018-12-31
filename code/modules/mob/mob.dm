@@ -13,7 +13,7 @@
 	if(mind && mind.current == src)
 		spellremove(src)
 	ghostize()
-	qdel_null(plane_holder)
+	QDEL_NULL(plane_holder)
 	..()
 	return QDEL_HINT_HARDDEL_NOW
 
@@ -339,20 +339,20 @@
 	set category = "OOC"
 
 	if (!( config.abandon_allowed ))
-		usr << "<span class='notice'>Respawn is disabled.</span>"
+		to_chat(usr, "<span class='notice'>Respawn is disabled.</span>")
 		return
 	if ((stat != 2 || !( ticker )))
-		usr << "<span class='notice'><B>You must be dead to use this!</B></span>"
+		to_chat(usr, "<span class='notice'><B>You must be dead to use this!</B></span>")
 		return
 	if (ticker.mode && ticker.mode.deny_respawn) //BS12 EDIT
-		usr << "<span class='notice'>Respawn is disabled for this roundtype.</span>"
+		to_chat(usr, "<span class='notice'>Respawn is disabled for this roundtype.</span>")
 		return
 	else
 		var/deathtime = world.time - src.timeofdeath
 		if(istype(src,/mob/observer/dead))
 			var/mob/observer/dead/G = src
 			if(G.has_enabled_antagHUD == 1 && config.antag_hud_restricted)
-				usr << "<font color='blue'><B>Upon using the antagHUD you forfeighted the ability to join the round.</B></font>"
+				to_chat(usr, "<font color='blue'><B>By using the antagHUD you forfeit the ability to join the round.</B></font>")
 				return
 		var/deathtimeminutes = round(deathtime / 600)
 		var/pluralcheck = "minute"
@@ -363,17 +363,17 @@
 		else if(deathtimeminutes > 1)
 			pluralcheck = " [deathtimeminutes] minutes and"
 		var/deathtimeseconds = round((deathtime - deathtimeminutes * 600) / 10,1)
-		usr << "You have been dead for[pluralcheck] [deathtimeseconds] seconds."
+		to_chat(usr, "You have been dead for[pluralcheck] [deathtimeseconds] seconds.")
 
 		if ((deathtime < (5 * 600)) && (ticker && ticker.current_state > GAME_STATE_PREGAME))
-			usr << "You must wait 5 minutes to respawn!"
+			to_chat(usr, "You must wait 5 minutes to respawn!")
 			return
 		else
-			usr << "You can respawn now, enjoy your new life!"
+			to_chat(usr, "You can respawn now, enjoy your new life!")
 
 	log_game("[usr.name]/[usr.key] used abandon mob.")
 
-	usr << "<font color='blue'><B>Make sure to play a different character, and please roleplay correctly!</B></font>"
+	to_chat(usr, "<font color='blue'><B>Make sure to play a different character, and please roleplay correctly!</B></font>")
 
 	if(!client)
 		log_game("[usr.key] AM failed due to disconnect.")
@@ -674,14 +674,18 @@
 				stat("Location:", "([x], [y], [z]) [loc]")
 				stat("CPU:","[world.cpu]")
 				stat("Instances:","[world.contents.len]")
+				stat(null, "Time Dilation: [round(SStime_track.time_dilation_current,1)]% AVG:([round(SStime_track.time_dilation_avg_fast,1)]%, [round(SStime_track.time_dilation_avg,1)]%, [round(SStime_track.time_dilation_avg_slow,1)]%)")
 
 			if(statpanel("Processes"))
 				if(processScheduler)
 					processScheduler.statProcesses()
 
 			if(statpanel("MC"))
+				stat("Location:", "([x], [y], [z]) [loc]")
 				stat("CPU:","[world.cpu]")
 				stat("Instances:","[world.contents.len]")
+				stat("World Time:", world.time)
+				stat("Real time of day:", REALTIMEOFDAY)
 				stat(null)
 				if(Master)
 					Master.stat_entry()
@@ -695,6 +699,9 @@
 					stat(null)
 					for(var/datum/controller/subsystem/SS in Master.subsystems)
 						SS.stat_entry()
+
+			if(statpanel("Tickets"))
+				GLOB.ahelp_tickets.stat_entry()
 
 		if(listed_turf && client)
 			if(!TurfAdjacent(listed_turf))
@@ -730,13 +737,12 @@
 
 
 /mob/proc/facedir(var/ndir)
-	if(!canface() || (client && (client.moving || (world.time < client.move_delay))))
+	if(!canface() || (client && (client.moving || (world.time < move_delay))))
 		return 0
 	set_dir(ndir)
 	if(buckled && buckled.buckle_movable)
 		buckled.set_dir(ndir)
-	if(client)
-		client.move_delay += movement_delay()
+	move_delay += movement_delay()
 	return 1
 
 
@@ -989,7 +995,7 @@ mob/proc/yank_out_object()
 /mob/proc/has_brain_worms()
 
 	for(var/I in contents)
-		if(istype(I,/mob/living/simple_animal/borer))
+		if(istype(I,/mob/living/simple_mob/animal/borer))
 			return I
 
 	return 0
@@ -1144,8 +1150,13 @@ mob/proc/yank_out_object()
 /mob/proc/throw_item(atom/target)
 	return
 
+/mob/proc/will_show_tooltip()
+	if(alpha <= EFFECTIVE_INVIS)
+		return FALSE
+	return TRUE
+
 /mob/MouseEntered(location, control, params)
-	if(usr != src && usr.is_preference_enabled(/datum/client_preference/mob_tooltips))
+	if(usr != src && usr.is_preference_enabled(/datum/client_preference/mob_tooltips) && src.will_show_tooltip())
 		openToolTip(user = usr, tip_src = src, params = params, title = get_nametag_name(usr), content = get_nametag_desc(usr))
 
 	..()
@@ -1159,3 +1170,19 @@ mob/proc/yank_out_object()
 	closeToolTip(usr) //No reason not to, really
 
 	..()
+
+// Manages a global list of mobs with clients attached, indexed by z-level.
+/mob/proc/update_client_z(new_z) // +1 to register, null to unregister.
+	if(registered_z != new_z)
+		if(registered_z)
+			GLOB.players_by_zlevel[registered_z] -= src
+		if(client)
+			if(new_z)
+				GLOB.players_by_zlevel[new_z] += src
+			registered_z = new_z
+		else
+			registered_z = null
+
+/mob/on_z_change(old_z, new_z)
+	..()
+	update_client_z(new_z)

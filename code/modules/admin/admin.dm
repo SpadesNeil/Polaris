@@ -52,6 +52,11 @@ proc/admin_notice(var/message, var/rights)
 	else
 		body += " \[<A href='?src=\ref[src];revive=\ref[M]'>Heal</A>\] "
 
+	if(M.client)
+		body += "<br><b>First connection:</b> [M.client.player_age] days ago"
+		body += "<br><b>BYOND account created:</b> [M.client.account_join_date]"
+		body += "<br><b>BYOND account age (days):</b> [M.client.account_age]"
+
 	body += {"
 		<br><br>\[
 		<a href='?_src_=vars;Vars=\ref[M]'>VV</a> -
@@ -234,7 +239,7 @@ proc/admin_notice(var/message, var/rights)
 
 		// Display the notes on the current page
 		var/number_pages = note_keys.len / PLAYER_NOTES_ENTRIES_PER_PAGE
-		// Emulate ceil(why does BYOND not have ceil)
+		// Emulate CEILING(why does BYOND not have ceil, 1)
 		if(number_pages != round(number_pages))
 			number_pages = round(number_pages) + 1
 		var/page_index = page - 1

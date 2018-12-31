@@ -1,6 +1,7 @@
 /mob/living/simple_animal/slime
 	name = "slime"
 	desc = "The most basic of slimes.  The grey slime has no remarkable qualities, however it remains one of the most useful colors for scientists."
+	tt_desc = "A Macrolimbus vulgaris"
 	icon = 'icons/mob/slime2.dmi'
 	icon_state = "grey baby slime"
 	intelligence_level = SA_ANIMAL
@@ -10,12 +11,14 @@
 	var/icon_state_override = null // Used for special slime appearances like the rainbow slime.
 	pass_flags = PASSTABLE
 
+	makes_dirt = FALSE	// Goop
+
 	speak_emote = list("chirps")
 
 	maxHealth = 150
 	var/maxHealth_adult = 200
-	melee_damage_lower = 5
-	melee_damage_upper = 25
+	melee_damage_lower = 10
+	melee_damage_upper = 15
 	melee_miss_chance = 0
 	gender = NEUTER
 

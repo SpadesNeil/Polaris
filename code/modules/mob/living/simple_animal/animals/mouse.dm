@@ -2,7 +2,7 @@
 	name = "mouse"
 	real_name = "mouse"
 	desc = "It's a small rodent."
-	tt_desc = "Mus musculus"
+	tt_desc = "E Mus musculus"
 	icon_state = "mouse_gray"
 	item_state = "mouse_gray"
 	icon_living = "mouse_gray"
@@ -16,10 +16,10 @@
 	see_in_dark = 6
 	universal_understand = 1
 
-	mob_size = MOB_MINISCULE
+	mob_size = MOB_SMALL
 	pass_flags = PASSTABLE
-	can_pull_size = ITEMSIZE_TINY
-	can_pull_mobs = MOB_PULL_NONE
+//	can_pull_size = ITEMSIZE_TINY
+//	can_pull_mobs = MOB_PULL_NONE
 	layer = MOB_LAYER
 	density = 0
 

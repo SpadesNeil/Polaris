@@ -123,6 +123,7 @@
 	damage_type = BURN
 	agony = 10
 	check_armour = "bio"
+	armor_penetration = 25	// It's acid
 
 	combustion = FALSE
 
@@ -130,9 +131,10 @@
 	name = "neurotoxic spit"
 	icon_state = "neurotoxin"
 	damage = 5
-	damage_type = TOX
+	damage_type = BIOACID
 	agony = 80
 	check_armour = "bio"
+	armor_penetration = 25	// It's acid-based
 
 	combustion = FALSE
 
@@ -140,9 +142,10 @@
 	name = "neurotoxic spit"
 	icon_state = "neurotoxin"
 	damage = 20
-	damage_type = TOX
+	damage_type = BIOACID
 	agony = 20
 	check_armour = "bio"
+	armor_penetration = 25	// It's acid-based
 
 /obj/item/projectile/energy/phoron
 	name = "phoron bolt"
@@ -212,7 +215,22 @@
 	muzzle_type = /obj/effect/projectile/pulse/muzzle
 
 /obj/item/projectile/energy/phase
-	kill_count = 4
+	name = "phase wave"
+	icon_state = "phase"
+	kill_count = 6
 	damage = 5
-	SA_bonus_damage = 55 // 60 total on animals.
+	SA_bonus_damage = 45	// 50 total on animals
 	SA_vulnerability = SA_ANIMAL
+
+/obj/item/projectile/energy/phase/light
+	kill_count = 4
+	SA_bonus_damage = 35	// 40 total on animals
+
+/obj/item/projectile/energy/phase/heavy
+	kill_count = 8
+	SA_bonus_damage = 55	// 60 total on animals
+
+/obj/item/projectile/energy/phase/heavy/cannon
+	kill_count = 10
+	damage = 15
+	SA_bonus_damage = 60	// 75 total on animals

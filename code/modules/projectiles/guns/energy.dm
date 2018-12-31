@@ -8,6 +8,7 @@
 	var/obj/item/weapon/cell/power_supply //What type of power cell this uses
 	var/charge_cost = 240 //How much energy is needed to fire.
 
+	var/accept_cell_type = /obj/item/weapon/cell/device
 	var/cell_type = /obj/item/weapon/cell/device/weapon
 	projectile_type = /obj/item/projectile/beam/practice
 
@@ -23,22 +24,11 @@
 
 	var/battery_lock = 0	//If set, weapon cannot switch batteries
 
-/obj/item/weapon/gun/energy/attackby(var/obj/item/A as obj, mob/user as mob)
-	..()
-
-/obj/item/weapon/gun/energy/switch_firemodes(mob/user)
-	if(..())
-		update_icon()
-
-/obj/item/weapon/gun/energy/emp_act(severity)
-	..()
-	update_icon()
-
 /obj/item/weapon/gun/energy/New()
 	..()
 	if(self_recharge)
 		power_supply = new /obj/item/weapon/cell/device/weapon(src)
-		processing_objects.Add(src)
+		START_PROCESSING(SSobj, src)
 	else
 		if(cell_type)
 			power_supply = new cell_type(src)
@@ -49,8 +39,11 @@
 
 /obj/item/weapon/gun/energy/Destroy()
 	if(self_recharge)
-		processing_objects.Remove(src)
+		STOP_PROCESSING(SSobj, src)
 	return ..()
+
+/obj/item/weapon/gun/energy/get_cell()
+	return power_supply
 
 /obj/item/weapon/gun/energy/process()
 	if(self_recharge) //Every [recharge_time] ticks, recharge a shot for the battery
@@ -75,6 +68,17 @@
 			charge_tick = 0
 	return 1
 
+/obj/item/weapon/gun/energy/attackby(var/obj/item/A as obj, mob/user as mob)
+	..()
+
+/obj/item/weapon/gun/energy/switch_firemodes(mob/user)
+	if(..())
+		update_icon()
+
+/obj/item/weapon/gun/energy/emp_act(severity)
+	..()
+	update_icon()
+
 /obj/item/weapon/gun/energy/consume_next_projectile()
 	if(!power_supply) return null
 	if(!ispath(projectile_type)) return null
@@ -86,13 +90,13 @@
 		if(self_recharge || battery_lock)
 			user << "<span class='notice'>[src] does not have a battery port.</span>"
 			return
-		if(istype(C, /obj/item/weapon/cell/device))
-			var/obj/item/weapon/cell/device/P = C
+		if(istype(C, accept_cell_type))
+			var/obj/item/weapon/cell/P = C
 			if(power_supply)
 				user << "<span class='notice'>[src] already has a power cell.</span>"
 			else
 				user.visible_message("[user] is reloading [src].", "<span class='notice'>You start to insert [P] into [src].</span>")
-				if(do_after(user, 10))
+				if(do_after(user, 5 * P.w_class))
 					user.remove_from_mob(P)
 					power_supply = P
 					P.loc = src
@@ -144,7 +148,7 @@
 	return null
 
 /obj/item/weapon/gun/energy/examine(mob/user)
-	..(user)
+	. = ..()
 	if(power_supply)
 		var/shots_remaining = round(power_supply.charge / charge_cost)
 		user << "Has [shots_remaining] shot\s remaining."
@@ -172,13 +176,20 @@
 			icon_state = "[modifystate][ratio]"
 		else
 			icon_state = "[initial(icon_state)][ratio]"
+
+	else if(power_supply)
+		if(modifystate)
+			icon_state = "[modifystate]"
+		else
+			icon_state = "[initial(icon_state)]"
+
 	if(!ignore_inhands) update_held_icon()
 
 /obj/item/weapon/gun/energy/proc/start_recharge()
 	if(power_supply == null)
 		power_supply = new /obj/item/weapon/cell/device/weapon(src)
 	self_recharge = 1
-	processing_objects.Add(src)
+	START_PROCESSING(SSobj, src)
 	update_icon()
 
 /obj/item/weapon/gun/energy/get_description_interaction()

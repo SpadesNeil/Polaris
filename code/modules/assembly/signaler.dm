@@ -117,14 +117,6 @@ Code:
 	signal.data["message"] = "ACTIVATE"
 	radio_connection.post_signal(src, signal)
 	return
-/*
-	for(var/obj/item/device/assembly/signaler/S in world)
-		if(!S)	continue
-		if(S == src)	continue
-		if((S.frequency == src.frequency) && (S.code == src.code))
-			spawn(0)
-				if(S)	S.pulse(0)
-	return 0*/
 
 
 /obj/item/device/assembly/signaler/pulse(var/radio = 0)
@@ -164,13 +156,13 @@ Code:
 
 /obj/item/device/assembly/signaler/process()
 	if(!deadman)
-		processing_objects.Remove(src)
+		STOP_PROCESSING(SSobj, src)
 	var/mob/M = src.loc
 	if(!M || !ismob(M))
 		if(prob(5))
 			signal()
 		deadman = 0
-		processing_objects.Remove(src)
+		STOP_PROCESSING(SSobj, src)
 	else if(prob(5))
 		M.visible_message("[M]'s finger twitches a bit over [src]'s signal button!")
 	return
@@ -180,7 +172,7 @@ Code:
 	set name = "Threaten to push the button!"
 	set desc = "BOOOOM!"
 	deadman = 1
-	processing_objects.Add(src)
+	START_PROCESSING(SSobj, src)
 	log_and_message_admins("is threatening to trigger a signaler deadman's switch")
 	usr.visible_message("<font color='red'>[usr] moves their finger over [src]'s signal button...</font>")
 

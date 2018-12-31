@@ -34,6 +34,11 @@
 	if(hud_used)	qdel(hud_used)		//remove the hud objects
 	hud_used = new /datum/hud(src)
 
+	if(client.prefs && client.prefs.client_fps)
+		client.fps = client.prefs.client_fps
+	else
+		client.fps = 0 // Results in using the server FPS
+
 	next_move = 1
 	sight |= SEE_SELF
 	..()
@@ -55,9 +60,17 @@
 	client.screen += plane_holder.plane_masters
 	recalculate_vis()
 
+	// AO support
+	var/ao_enabled = client.is_preference_enabled(/datum/client_preference/ambient_occlusion)
+	plane_holder.set_ao(VIS_OBJS, ao_enabled)
+	plane_holder.set_ao(VIS_MOBS, ao_enabled)
+
 	//set macro to normal incase it was overriden (like cyborg currently does)
 	client.set_hotkeys_macro("macro", "hotkeymode")
 
 	if(!client.tooltips)
 		client.tooltips = new(client)
-	
+
+	var/turf/T = get_turf(src)
+	if(isturf(T))
+		update_client_z(T.z)

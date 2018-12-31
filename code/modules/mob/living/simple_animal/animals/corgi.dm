@@ -3,7 +3,7 @@
 	name = "corgi"
 	real_name = "corgi"
 	desc = "It's a corgi."
-	tt_desc = "Canis familiaris"
+	tt_desc = "E Canis lupus familiaris"
 	intelligence_level = SA_ANIMAL
 	icon_state = "corgi"
 	icon_living = "corgi"
@@ -38,7 +38,6 @@
 	real_name = "Ian"	//Intended to hold the name without altering it.
 	gender = MALE
 	desc = "It's a corgi."
-	tt_desc = "Canis commandus"
 	var/turns_since_scan = 0
 	var/obj/movement_target
 	response_help  = "pets"
@@ -207,6 +206,7 @@
 				for(var/i in list(1,2,4,8,4,2,1,2,4,8,4,2,1,2,4,8,4,2))
 					set_dir(i)
 					sleep(1)
+
 
 //Technically this should be like, its own file or something or a subset of dog but whatever. Not a coder.
 /mob/living/simple_animal/corgi/tamaskan

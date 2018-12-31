@@ -48,11 +48,9 @@
 	..()
 	qdel(src)
 
-/mob/living/simple_animal/hostile/mimic/MouseEntered(location, control, params)
-	..()
-	closeToolTip(usr) 
-	// ideally, we'd remove the code in ..() that opens the tooltip, 
-	// but then we'd need to duplicate all the other code in ..()
+/mob/living/simple_animal/hostile/mimic/will_show_tooltip()
+	return FALSE
+
 
 //
 // Crate Mimic
@@ -68,7 +66,7 @@
 	var/attempt_open = 0
 
 // Pickup loot
-/mob/living/simple_animal/hostile/mimic/crate/initialize()
+/mob/living/simple_animal/hostile/mimic/crate/Initialize()
 	. = ..()
 	for(var/obj/item/I in loc)
 		I.forceMove(src)

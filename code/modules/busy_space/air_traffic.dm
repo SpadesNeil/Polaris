@@ -17,7 +17,7 @@ var/datum/lore/atc_controller/atc = new/datum/lore/atc_controller
 	next_message = world.time + rand(delay_min,delay_max)
 	process()
 
-/datum/lore/atc_controller/proc/process()
+/datum/lore/atc_controller/process()
 	if(world.time >= next_message)
 		if(squelched)
 			next_message = world.time + backoff_delay
@@ -63,7 +63,7 @@ var/datum/lore/atc_controller/atc = new/datum/lore/atc_controller
 
 	var/combined_name = "[owner] [prefix] [shipname]"
 	var/alt_atc_names = list("[using_map.station_short] TraCon","[using_map.station_short] Control","[using_map.station_short] STC","[using_map.station_short] Airspace")
-	var/wrong_atc_names = list("Sol Command","Orion Control", "[using_map.dock_name]")
+	var/wrong_atc_names = list("Sol Command","New Reykjavik StarCon", "[using_map.dock_name]")
 	var/mission_noun = list("flight","mission","route")
 	var/request_verb = list("requesting","calling for","asking for")
 
