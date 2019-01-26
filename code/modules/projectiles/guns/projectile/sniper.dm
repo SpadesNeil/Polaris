@@ -67,35 +67,36 @@
 
 	toggle_scope(2.0)
 
-////////////// Dragunov Sniper Rifle //////////////
+////////////// GPs-O3 Sniper Rifle //////////////
 
-/obj/item/weapon/gun/projectile/SVD
-	name = "\improper Dragunov"
-	desc = "The SVD, also known as the Dragunov, is mass produced with an Optical Sniper Sight so simple that even Ivan can use it. Too bad for you that the inscriptions are written in Russian. Uses 7.62mm rounds."
-	icon_state = "SVD"
-	item_state = "SVD"
-	w_class = ITEMSIZE_HUGE // So it can't fit in a backpack.
+/obj/item/weapon/gun/projectile/sniper
+	name = "precision rifle" // "sniper rifle" "scoped rifle" and "semi-automatic sniper" were all generic names I considered. I can't decide which I like most.
+	desc = "The GPs-O3 is an expensive scoped rifle produced by Gurov Projectile Weapons LLC. These rifles were designed to fire high velocity ammunition. As such, the gun is advertised to achieve 'laser-like' accuracy, but without all the complex, delicate parts needed by energy weapons. Uses 8.2x70mm Gurov Magnum rounds."
+	icon_state = "SVD" // This icon is going to go away in the final version of this PR. Don't merge until this gets changed.
+	item_state = "SVD" // This icon is going to go away in the final version of this PR. Don't merge until this gets changed.
+	w_class = ITEMSIZE_HUGE
 	force = 10
 	slot_flags = SLOT_BACK // Needs a sprite.
 	origin_tech = list(TECH_COMBAT = 8, TECH_MATERIAL = 2, TECH_ILLEGAL = 8)
-	caliber = "7.62mm"
-	load_method = MAGAZINE
-	accuracy = -45 //shooting at the hip
-	scoped_accuracy = 0
-//	requires_two_hands = 1
-//	one_handed_penalty = 60 // The weapon itself is heavy, and the long barrel makes it hard to hold steady with just one hand.
-	fire_sound = 'sound/weapons/Gunshot_SVD.ogg' // Has a very unique sound.
-	magazine_type = /obj/item/ammo_magazine/m762svd
-	allowed_magazines = list(/obj/item/ammo_magazine/m762svd)
+	caliber = "8.2x70mm Gurov Magnum" // Proprietary ammo is hitscan. Trust me, you don't want people to have hitscan 7.62mm available to them.
+	// ToDo: add the special ammo
 
-/obj/item/weapon/gun/projectile/SVD/update_icon()
+	load_method = MAGAZINE
+	accuracy = -45
+	scoped_accuracy = 75
+//	requires_two_hands = 1
+	fire_sound = 'sound/weapons/Gunshot_SVD.ogg' // Has a very unique sound.
+	magazine_type = /obj/item/ammo_magazine/m762svd // ToDo: Change this.
+	allowed_magazines = list(/obj/item/ammo_magazine/m762svd) // ToDo: Change this.
+
+/obj/item/weapon/gun/projectile/sniper/update_icon()
 	..()
 	if(ammo_magazine)
-		icon_state = "SVD"
+		icon_state = "SVD" // ToDo: Change this.
 	else
-		icon_state = "SVD-empty"
+		icon_state = "SVD-empty" // ToDo: Change this.
 
-/obj/item/weapon/gun/projectile/SVD/verb/scope()
+/obj/item/weapon/gun/projectile/sniper/verb/scope()
 	set category = "Object"
 	set name = "Use Scope"
 	set popup_menu = 1
